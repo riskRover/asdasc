@@ -8,7 +8,7 @@ Feature: Naukri Application Home Page Functionalities
   Scenario: Edit Carrer Profile
     When I navigate to my profile
     And Click on career profile
-    And I click on "preffered location", select/deslect a "location"
+    And I click on "preffered location", select/deselect a "location"
     And click on save button
     Then I should see profile updated as "Today"
     
