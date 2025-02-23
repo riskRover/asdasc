@@ -1,0 +1,21 @@
+Write-Host "EXECUTION_ENV = $env:EXECUTION_ENV"
+Write-Host "OS = $env:OS"
+Write-Host "BROWSER = $env:BROWSER"
+Write-Host "APP_URL = $env:APP_URL"
+Write-Host "SELENIUM_REMOTE_URL = $env:SELENIUM_REMOTE_URL"
+Write-Host "CHROME_DRIVER_PATH = $env:CHROME_DRIVER_PATH"
+Write-Host "NAUKRI_USERNAME = $env:NAUKRI_USERNAME"
+Write-Host "NAUKRI_PASSWORD = $env:NAUKRI_PASSWORD"
+Write-Host "CHROME_ARGS = $env:CHROME_ARGS"
+
+---
+
+$env:EXECUTION_ENV = "local"
+$env:OS = "windows"
+$env:BROWSER = "chrome"
+$env:APP_URL = "https://www.naukri.com"
+$env:SELENIUM_REMOTE_URL = "http://localhost:4444/wd/hub"
+$env:CHROME_DRIVER_PATH = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
+$env:NAUKRI_USERNAME = "your_username_here"
+$env:NAUKRI_PASSWORD = "your_password_here"
+$env:CHROME_ARGS = "--headless --remote-debugging-port=9222"
