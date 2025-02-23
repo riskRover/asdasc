@@ -6,10 +6,10 @@ Feature: Naukri Application Home Page Functionalities
     And enter the credentials
 	
   Scenario: Edit Carrer Profile
-    When I naviagte to my profile
-    And Click on carrer profile
+    When I navigate to my profile
+    And Click on career profile
     And I click on "preffered location", select/deslect a "location"
-    And clcik on save button
+    And click on save button
     Then I should see profile updated as "Today"
     
    #Scenario: Update Resume
