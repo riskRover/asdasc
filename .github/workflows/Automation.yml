@@ -1,0 +1,120 @@
+name: Naukri-Profile-Update
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    # strategy:
+    #   matrix:
+    #     java: [11]
+    #     os: [ubuntu-latest]
+
+    steps:
+    # - name: Set Execution Policy to Unrestricted (for CurrentUser)
+    #   run: Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+    #   shell: powershell
+      
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # - name: Set up JDK 11
+    #   uses: actions/setup-java@v2
+    #   with:
+    #     java-version: 11
+    #     distribution: 'temurin'
+
+    # - name: Set PowerShell execution policy
+    #   run: |
+    #     powershell -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy RemoteSigned -Scope Process -Force"
+    #   shell: powershell
+
+    # - name: Set Execution Policy to Unrestricted (for CurrentUser)
+    #   run: |
+    #     powershell -Command "Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force"
+    #     powershell -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy RemoteSigned -Scope Process -Force"
+    #   shell: powershell
+
+    - name: verify version
+      shell: powershell
+      run: |
+        mvn -version
+        (Get-Command "C:\Program Files\Google\Chrome\Application\chrome.exe").FileVersionInfo.ProductVersion
+        Start-Process "C:\Program Files\Google\Chrome\Application\chromedriver.exe" -ArgumentList "--version" -NoNewWindow -Wait
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    #- name: Verify Internet Access
+    #  run: timeout 10 ping naukri.com
+
+    # - name: Set up ChromeDriver
+    #   run: |
+    #     sudo apt-get update
+    #     wget https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.126/linux64/chromedriver-linux64.zip
+    #     sudo unzip chromedriver-linux64.zip -d /usr/local/bin/
+    #     sudo mv /usr/local/bin/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+    #     sudo chmod 777 /usr/local/bin/chromedriver
+    #     chromium-browser --version
+    #     chromedriver --version
+
+    # - name: Set CHROME_DRIVER_PATH environment variable
+    #   run: echo "CHROME_DRIVER_PATH=$(which chromedriver)" >> $GITHUB_ENV
+
+    # - name: Create unique user data directory
+    #   run: mkdir -p /tmp/chrome-user-data-${{ github.run_id }}
+
+    # - name: Start Selenium Server
+    #   run: |
+    #     wget https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.0.0/selenium-server-4.0.0.jar
+    #     mkdir -p /tmp/selenium-${{ github.run_id }}
+    #     java -jar selenium-server-4.0.0.jar standalone &
+    #     sleep 10  # Increased delay to ensure Selenium server starts
+# mkdir -p /tmp/selenium-${{ github.run_id }}
+    # - name: Check Selenium Server
+    #   run: |
+    #     if [ "$(curl -s http://localhost:4444/wd/hub/status | jq -r .value.ready)" != "true" ]; then
+    #       echo "Selenium server is not ready"
+    #       exit 1
+    #     fi
+
+    # - name: Debug Environment Variables
+    #   run: |
+    #     echo "EXECUTION_ENV=$EXECUTION_ENV"
+    #     echo "OS=$OS"
+    #     echo "BROWSER=$BROWSER"
+    #     echo "APP_URL=$APP_URL"
+    #     echo "SELENIUM_REMOTE_URL=$SELENIUM_REMOTE_URL"
+    #     echo "CHROME_DRIVER_PATH=$CHROME_DRIVER_PATH"
+    #     echo "NAUKRI_USERNAME=$NAUKRI_USERNAME"
+    #     echo "NAUKRI_PASSWORD=$NAUKRI_PASSWORD"
+
+    # - name: Set Execution Policy to Unrestricted (for CurrentUser)
+    #   run: |
+    #     powershell -Command "Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force"
+    #   shell: powershell
+
+    - name: Run Maven Build
+      run: mvn clean install -DskipTests=false -Dsurefire.printSummary=true -Dsurefire.verbose=true -DredirectTestOutputToFile=false
+      shell: cmd
+      env:
+        EXECUTION_ENV: local
+        OS: windows
+        BROWSER: chrome
+        APP_URL: https://www.naukri.com
+        SELENIUM_REMOTE_URL: http://localhost:4444/wd/hub
+        CHROME_DRIVER_PATH: C:\Program Files\Google\Chrome\Application\chromedriver.exe
+        NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
+        NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+        CHROME_ARGS: --headless --remote-debugging-port=9222
