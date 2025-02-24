@@ -25,11 +25,11 @@ jobs:
       uses: actions/checkout@v2
 
     # Add a step to execute the system_requirements.ps1 script
-    - name: Install System Requirements
-      shell: pwsh
-      run: |
-        # Run the PowerShell script to install Java, Maven, Chrome, and ChromeDriver
-        .\requirements\system_requirements.ps1
+    # - name: Install System Requirements
+    #   shell: pwsh
+    #   run: |
+    #     # Run the PowerShell script to install Java, Maven, Chrome, and ChromeDriver
+    #     .\requirements\system_requirements.ps1
 
     - name: verify version
       shell: powershell
@@ -37,6 +37,15 @@ jobs:
         mvn -version
         (Get-Command "C:\Program Files\Google\Chrome\Application\chrome.exe").FileVersionInfo.ProductVersion
         Start-Process "C:\Program Files\Google\Chrome\Application\chromedriver.exe" -ArgumentList "--version" -NoNewWindow -Wait
+      continue-on-error: true  # Allow the step to fail but continue the workflow
+
+    - name: Check if verify version step failed and re-run system_requirements.ps1 if necessary
+      if: ${{ failure() }}  # This checks if the previous step failed
+      shell: pwsh
+      run: |
+        # Re-run the system_requirements.ps1 script if the verify version step failed
+        Write-Host "Verify version failed. Re-running system_requirements.ps1 to fix issues."
+        .\requirements\system_requirements.ps1
 
     - name: Cache Maven dependencies
       uses: actions/cache@v2
