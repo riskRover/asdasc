@@ -1,12 +1,12 @@
 # Define installation paths
 $mavenVersion = "3.8.8"
 $javaVersion = "jdk-17.0.2_windows-x64_bin"
-$chromeDriverVersion = "133.0.6943.126"
-$chromeVersion = "133.0.6943.127"
+#$chromeDriverVersion = "133.0.6943.126"
+#$chromeVersion = "133.0.6943.127"
 $javaPath = "C:\Program Files\Java"
 $mavenPath = "C:\Program Files\Maven"
 $chromeInstallerPath = "C:\temp\chrome_installer.exe"
-$chromeDriverZipPath = "C:\temp\chromedriver.zip"
+$chromeDriverZipPath = "C:\temp\chromedriver.zip"  # ChromeDriver ZIP will be downloaded here
 $chromeDriverExtractPath = "C:\temp\chromedriver"
 
 # Set Execution Policy to Unrestricted for CurrentUser
@@ -57,27 +57,33 @@ $chromeUrl = "https://dl.google.com/chrome/install/latest/chrome_installer.exe"
 Invoke-WebRequest -Uri $chromeUrl -OutFile $chromeInstallerPath
 Start-Process -FilePath $chromeInstallerPath -ArgumentList "/silent" -Wait
 
-# Check Chrome installation path (looking in the registry for Chrome install location)
-$chromeInstallLocation = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome" | Select-Object -ExpandProperty InstallLocation)
-
-# If Chrome is installed, use the InstallLocation value
-if ($chromeInstallLocation) {
-    Write-Host "Chrome installed at: $chromeInstallLocation"
-} else {
-    Write-Host "Chrome installation path not found."
-    exit
-}
+# Check Chrome installation path
+$chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+$chromeDriverDestPath = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
 
 # Install ChromeDriver
-$chromeDriverUrl = "https://chromedriver.storage.googleapis.com/$chromeDriverVersion/chromedriver_win32.zip"
-Invoke-WebRequest -Uri $chromeDriverUrl -OutFile $chromeDriverZipPath
-Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath
+$chromeDriverUrl = "https://storage.googleapis.com/chrome-for-testing-public/133.0.6943.126/win64/chromedriver-win64.zip"
+Invoke-WebRequest -Uri $chromeDriverUrl -OutFile $chromeDriverZipPath  # Download ChromeDriver ZIP to C:\temp
+Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
 
-# Move chromedriver.exe to Chrome's install directory
-$chromeDriverExePath = "$chromeDriverExtractPath\chromedriver.exe"
-if (Test-Path $chromeDriverExePath -and Test-Path $chromeInstallLocation) {
-    Write-Host "Moving chromedriver.exe to $chromeInstallLocation"
-    Move-Item -Path $chromeDriverExePath -Destination $chromeInstallLocation
+# Move chromedriver.exe to Chrome's install directory if not already present
+$chromeDriverExePath = "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe"
+
+# Check if ChromeDriver and Chrome paths exist separately
+if (Test-Path $chromeDriverExePath) {
+    if (Test-Path $chromePath) {
+        # Check if chromedriver.exe already exists in the destination directory
+        if (-not (Test-Path $chromeDriverDestPath)) {
+            Write-Host "Moving chromedriver.exe to $chromeDriverDestPath"
+            Move-Item -Path $chromeDriverExePath -Destination $chromeDriverDestPath
+        } else {
+            Write-Host "chromedriver.exe already exists in the destination."
+        }
+    } else {
+        Write-Host "Chrome not found at $chromePath"
+    }
+} else {
+    Write-Host "ChromeDriver not found at $chromeDriverExePath"
 }
 
 Write-Host "Installation Complete: Maven, Java, ChromeDriver, and Chrome are set up."
