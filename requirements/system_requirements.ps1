@@ -31,7 +31,7 @@ if (-not (Test-Path "C:\temp")) {
 }
 
 # Install Java (OpenJDK)
-$javaUrl = "https://download.java.net/java/GA/jdk17/17.0.2/6/GPL/openjdk-17.0.2_windows-x64_bin.zip"
+$javaUrl = "https://builds.openlogic.com/downloadJDK/openlogic-openjdk/17.0.14+7/openlogic-openjdk-17.0.14+7-windows-x64.zip"
 $javaZip = "C:\temp\openjdk.zip"
 Invoke-WebRequest -Uri $javaUrl -OutFile $javaZip
 Expand-Archive -Path $javaZip -DestinationPath $javaPath
