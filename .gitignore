@@ -1,5 +1,5 @@
 # Ignore the build output folder (for Java projects)
-target/
+/target/
 
 # Ignore Visual Studio Code settings folder
 .vscode/
@@ -9,4 +9,4 @@ target/
 .classpath
 
 # Ignore the settings directory (for Eclipse or other IDEs)
-.settings/
+/.settings/
