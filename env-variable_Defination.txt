@@ -19,3 +19,6 @@ $env:CHROME_DRIVER_PATH = "C:\Program Files\Google\Chrome\Application\chromedriv
 $env:NAUKRI_USERNAME = "your_username_here"
 $env:NAUKRI_PASSWORD = "your_password_here"
 $env:CHROME_ARGS = "--headless --remote-debugging-port=9222"
+
+permission required- command to process it
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
