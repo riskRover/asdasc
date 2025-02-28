@@ -106,7 +106,7 @@ jobs:
 
     - name: Run Maven Build
       run: mvn clean install -DskipTests=false -Dsurefire.printSummary=true -Dsurefire.verbose=true -DredirectTestOutputToFile=false
-      shell: cmd
+      shell: pwsh
       env:
         EXECUTION_ENV: local
         OS: windows
