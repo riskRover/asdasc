@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted
     # strategy:
     #   matrix:
     #     java: [11]
@@ -31,21 +31,21 @@ jobs:
     #     # Run the PowerShell script to install Java, Maven, Chrome, and ChromeDriver
     #     .\requirements\system_requirements.ps1
 
-    - name: verify-version
-      shell: powershell
-      continue-on-error: true  # Allow the step to fail but continue the workflow
-      run: |
-        mvn -version
-        (Get-Command "C:\Program Files\Google\Chrome\Application\chrome.exe").FileVersionInfo.ProductVersion
-        Start-Process "C:\Program Files\Google\Chrome\Application\chromedriver.exe" -ArgumentList "--version" -NoNewWindow -Wait
-
-    - name: Check if verify version step failed and re-run system_requirements.ps1 if necessary
-      if: ${{ steps.verify-version.outcome == 'failure' }}  # This checks if the previous step failed
+    - name: Install Dependencies on self-hosted runner
+      #if: ${{ steps.verify-version.outcome == 'failure' }}  # This checks if the previous step failed
       shell: powershell
       run: |
         # Re-run the system_requirements.ps1 script if the verify version step failed
         Write-Host "Verify version failed. Re-running system_requirements.ps1 to fix issues."
         .\requirements\system_requirements.ps1
+
+    - name: verify-version
+      shell: powershell
+      #continue-on-error: true  # Allow the step to fail but continue the workflow
+      run: |
+        mvn -version
+        (Get-Command "C:\Program Files\Google\Chrome\Application\chrome.exe").FileVersionInfo.ProductVersion
+        Start-Process "C:\Program Files\Google\Chrome\Application\chromedriver.exe" -ArgumentList "--version" -NoNewWindow -Wait
 
     - name: Cache Maven dependencies
       uses: actions/cache@v2
