@@ -37,7 +37,7 @@ jobs:
         mvn -version
         (Get-Command "C:\Program Files\Google\Chrome\Application\chrome.exe").FileVersionInfo.ProductVersion
         Start-Process "C:\Program Files\Google\Chrome\Application\chromedriver.exe" -ArgumentList "--version" -NoNewWindow -Wait
-      continue-on-error: true  # Allow the step to fail but continue the workflow
+      #continue-on-error: true  # Allow the step to fail but continue the workflow
 
     - name: Check if verify version step failed and re-run system_requirements.ps1 if necessary
       if: ${{ failure() }}  # This checks if the previous step failed
