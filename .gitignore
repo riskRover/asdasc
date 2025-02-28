@@ -9,4 +9,4 @@
 .classpath
 
 # Ignore the settings directory (for Eclipse or other IDEs)
-/.settings/
+.settings/
