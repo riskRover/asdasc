@@ -31,7 +31,7 @@ jobs:
     #     # Run the PowerShell script to install Java, Maven, Chrome, and ChromeDriver
     #     .\requirements\system_requirements.ps1
 
-    - name: verify version
+    - name: verify-version
       shell: powershell
       continue-on-error: true  # Allow the step to fail but continue the workflow
       run: |
