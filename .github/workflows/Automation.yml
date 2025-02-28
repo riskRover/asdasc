@@ -41,7 +41,7 @@ jobs:
 
     - name: Check if verify version step failed and re-run system_requirements.ps1 if necessary
       if: ${{ steps.verify-version.outcome == 'failure' }}  # This checks if the previous step failed
-      shell: pwsh
+      shell: powershell
       run: |
         # Re-run the system_requirements.ps1 script if the verify version step failed
         Write-Host "Verify version failed. Re-running system_requirements.ps1 to fix issues."
@@ -106,7 +106,7 @@ jobs:
 
     - name: Run Maven Build
       run: mvn clean install -DskipTests=false -Dsurefire.printSummary=true -Dsurefire.verbose=true -DredirectTestOutputToFile=false
-      shell: pwsh
+      shell: powershell
       env:
         EXECUTION_ENV: local
         OS: windows
